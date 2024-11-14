@@ -31,7 +31,10 @@ class GenAiModel {
                 'Text that needs to be translated into another language'),
         'targetLanguage': Schema(SchemaType.string,
             description: 'The language the text needs to be translated into, '
-                'which can be `English`, `Arabic`, `Chinese`, `Croatian`, `Czech`, `Danish`, `Dutch`, `Finnish`, `French`, `German`, `Greek`, `Hebrew`, `Hungarian`, `Hindi`, `Indonesian`, `Italian`, `Japanese`, `Korean`, `Norwegian`, `Polish`, `Portuguese`, `Romanian`, `Russian`, `Slovak`, `Spanish`, `Swedish`, `Turkish`, `Thai`, `Ukrainian`, or `Vietnamese`.'),
+                'which can be `English`, `Arabic`, `Chinese`, `Croatian`, `Czech`, `Danish`, `Dutch`, `Finnish`, '
+                '`French`, `German`, `Greek`, `Hebrew`, `Hungarian`, `Hindi`, `Indonesian`, `Italian`, `Japanese`, '
+                '`Korean`, `Norwegian`, `Polish`, `Portuguese`, `Romanian`, `Russian`, `Slovak`, `Spanish`, '
+                '`Swedish`, `Turkish`, `Thai`, `Ukrainian`, or `Vietnamese`.'),
       }, requiredProperties: [
         'message',
         'targetLanguage'

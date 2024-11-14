@@ -50,6 +50,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     // If the message is already translated to the user's language,
     // no action is taken
     if (event.message.translations.containsKey(userLanguage)) {
+      event.onComplete(true);
       return;
     }
 
@@ -89,12 +90,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ServiceLocator.instance
             .get<Database>()
             .updateTranslatePublicMessage(updatedMessage);
+
+        event.onComplete(true);
       }
     } catch (e) {
       if (kDebugMode) {
         print("Error translating message: $e");
       }
     }
+
+    event.onComplete(false);
   }
 
   // Mock API function to simulate translation invoke

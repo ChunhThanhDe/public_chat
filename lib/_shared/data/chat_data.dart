@@ -48,13 +48,12 @@ final class UserDetail {
   final String displayName;
   final String? photoUrl;
   final String uid;
-  final String userLanguage;
+  String? userLanguage;
 
-  UserDetail.fromFirebaseUser(User user, String? existingUserLanguage)
+  UserDetail.fromFirebaseUser(User user)
       : displayName = user.displayName ?? 'Unknown',
         photoUrl = user.photoURL,
-        uid = user.uid,
-        userLanguage = existingUserLanguage ?? defaultLanguage;
+        uid = user.uid;
 
   UserDetail.fromMap(this.uid, Map<String, dynamic> map)
       : displayName = map['displayName'],
@@ -65,5 +64,10 @@ final class UserDetail {
         'displayName': displayName,
         'photoUrl': photoUrl,
         'userLanguage': userLanguage
+      };
+
+  Map<String, dynamic> toFirestoreMap() => {
+        'displayName': displayName,
+        'photoUrl': photoUrl,
       };
 }

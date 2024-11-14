@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_network/image_network.dart';
 
 class ChatBubble extends StatefulWidget {
-  final VoidCallback onChatBubbleTap;
+  final Future<bool> Function() onChatBubbleTap;
   final bool isMine;
   final String message;
   final String? photoUrl;
@@ -25,6 +25,8 @@ class ChatBubble extends StatefulWidget {
 class _ChatBubbleState extends State<ChatBubble> {
   final double _iconSize = 24.0;
   bool _isTapped = false;
+  bool _isTranslating = false;
+  String _translationStatus = "";
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +51,23 @@ class _ChatBubbleState extends State<ChatBubble> {
     ));
 
     // message bubble
-    widgets.add(GestureDetector(
-        onTap: () {
+    widgets.add(
+      // Toggle tap to translate
+      GestureDetector(
+        onTap: () async {
           setState(() {
-            _isTapped = true; // Toggle tap state
+            _isTapped = true;
+            _isTranslating = true;
+            _translationStatus = "Đang dịch...";
           });
-          widget.onChatBubbleTap();
+
+          final success = await widget.onChatBubbleTap();
+
+          setState(() {
+            _isTranslating = false;
+            _translationStatus =
+                success ? "Đã dịch" : "Có lỗi xảy ra rồi, thử lại sau ít phút";
+          });
         },
         child: Column(
           children: [
@@ -66,7 +79,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                   color: _isTapped
                       ? (widget.isMine
                           ? Colors.black54
-                          : Colors.blueGrey) // Change color on tap
+                          : Colors.black54) // Change color on tap
                       : widget.isMine
                           ? Colors.black26
                           : Colors.black87),
@@ -134,8 +147,21 @@ class _ChatBubbleState extends State<ChatBubble> {
                 ],
               ),
             ),
+            if (_isTapped)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  _isTranslating ? "Đang dịch..." : _translationStatus,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: _isTranslating ? Colors.grey : Colors.red,
+                  ),
+                ),
+              ),
           ],
-        )));
+        ),
+      ),
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(

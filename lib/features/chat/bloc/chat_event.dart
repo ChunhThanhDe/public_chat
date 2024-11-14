@@ -16,9 +16,11 @@ class SendMessageEvent extends ChatEvent {
 
 class TranslateMessageEvent extends ChatEvent {
   final Message message;
+  final void Function(bool success) onComplete;
 
-  const TranslateMessageEvent({required this.message});
+  const TranslateMessageEvent(
+      {required this.message, required this.onComplete});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, onComplete];
 }

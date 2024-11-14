@@ -37,18 +37,11 @@ final class Database {
   }
 
   Future<void> saveUser(User user) async {
-    final userDoc = await FirebaseFirestore.instance
-        .collection(_userList)
-        .doc(user.uid)
-        .get();
-
-    final existingUserLanguage = userDoc.data()?['userLanguage'];
-
-    final userDetail = UserDetail.fromFirebaseUser(user, existingUserLanguage);
+    final userDetail = UserDetail.fromFirebaseUser(user);
     FirebaseFirestore.instance
         .collection(_userList)
         .doc(user.uid)
-        .set(userDetail.toMap(), SetOptions(merge: true));
+        .set(userDetail.toFirestoreMap(), SetOptions(merge: true));
   }
 
   Future<void> updateUserLanguage(String uid, String language) async {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
@@ -71,10 +73,18 @@ class PublicChatScreen extends StatelessWidget {
 
                               // Handle tap action to trigger message translation
                               return ChatBubble(
-                                  onChatBubbleTap: () => context
-                                      .read<ChatBloc>()
-                                      .add(TranslateMessageEvent(
-                                          message: message)),
+                                  onChatBubbleTap: () async {
+                                    final chatBloc = context.read<ChatBloc>();
+                                    final completer = Completer<bool>();
+
+                                    chatBloc.add(TranslateMessageEvent(
+                                      message: message,
+                                      onComplete: (success) =>
+                                          completer.complete(success),
+                                    ));
+
+                                    return completer.future;
+                                  },
                                   isMine: message.sender == user?.uid,
                                   message: message.message,
                                   photoUrl: photoUrl,
