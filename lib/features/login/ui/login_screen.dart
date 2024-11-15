@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:public_chat/constants/app_constants.dart';
 import 'package:public_chat/features/chat/ui/public_chat_screen.dart';
 import 'package:public_chat/features/login/bloc/login_cubit.dart';
 import 'package:public_chat/features/login/ui/widgets/sign_in_button.dart';
+import 'package:public_chat/repository/preferences_manager.dart';
+import 'package:public_chat/service_locator/service_locator.dart';
 import 'package:public_chat/utils/locale_support.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -15,8 +19,28 @@ class LoginScreen extends StatelessWidget {
       );
 }
 
-class _LoginScreenBody extends StatelessWidget {
+class _LoginScreenBody extends StatefulWidget {
   const _LoginScreenBody();
+
+  @override
+  State<_LoginScreenBody> createState() => _LoginScreenBodyState();
+}
+
+class _LoginScreenBodyState extends State<_LoginScreenBody> {
+  String? _userLanguage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLanguage();
+  }
+
+  Future<void> _loadLanguage() async {
+    final language = await PreferencesManager.instance.getLanguage();
+    setState(() {
+      _userLanguage = language;
+    });
+  }
 
   @override
   Widget build(BuildContext context) => BlocConsumer<LoginCubit, LoginState>(
@@ -32,19 +56,21 @@ class _LoginScreenBody extends StatelessWidget {
           }
         },
         builder: (context, state) {
+          final loginErrorText = PreferencesManager.instance.getLanguage();
+
           final Widget content = state is LoginFailed
               ? Column(
                   children: [
-                    const Text('Login failed. Try again'),
+                    Text(_userLanguage ?? AppTexts.loginErrorText),
                     buildSignInButton(
-                      label: context.locale.login,
+                      label: _userLanguage ?? context.locale.login,
                       onPressed: () =>
                           context.read<LoginCubit>().requestLogin(),
                     )
                   ],
                 )
               : buildSignInButton(
-                  label: context.locale.login,
+                  label: _userLanguage ?? context.locale.login,
                   onPressed: () => context.read<LoginCubit>().requestLogin(),
                 );
 

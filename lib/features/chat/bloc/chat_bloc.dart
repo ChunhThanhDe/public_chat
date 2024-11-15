@@ -4,19 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:public_chat/_shared/data/chat_data.dart';
-import 'package:public_chat/_shared/data/language_support_data.dart';
 import 'package:public_chat/repository/database.dart';
 import 'package:public_chat/repository/genai_model.dart';
+import 'package:public_chat/repository/preferences_manager.dart';
 import 'package:public_chat/service_locator/service_locator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'chat_event.dart';
 part 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final GenAiModel _model = ServiceLocator.instance.get<GenAiModel>();
-  final SharedPreferences prefs =
-      ServiceLocator.instance.get<SharedPreferences>();
 
   ChatBloc() : super(ChatInitialState()) {
     on<SendMessageEvent>(_onSendMessage);
@@ -45,7 +42,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   // Handle translating a message by Function call
   Future<void> _onTranslateMessage(
       TranslateMessageEvent event, Emitter<ChatState> emit) async {
-    final userLanguage = prefs.getString('userLanguage') ?? defaultLanguage;
+    final userLanguage = await PreferencesManager.instance.getLanguage();
 
     // If the message is already translated to the user's language,
     // no action is taken

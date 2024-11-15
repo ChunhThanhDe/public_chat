@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:public_chat/_shared/data/language_support_data.dart';
 
 final class Message {
   final String id;

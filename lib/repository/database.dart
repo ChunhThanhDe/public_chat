@@ -14,6 +14,8 @@ final class Database {
 
   final String _publicRoom = 'public';
   final String _userList = 'users';
+  final String _textDisplayed = "displayed";
+
   void writePublicMessage(Message message) {
     FirebaseFirestore.instance.collection(_publicRoom).add(message.toMap());
   }
@@ -68,6 +70,42 @@ final class Database {
             fromFirestore: _userDetailFromFirestore,
             toFirestore: _userDetailToFirestore)
         .snapshots();
+  }
+
+  Future<void> setTextDisplayApplication(
+      String language, Map<String, dynamic> textData) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(_textDisplayed)
+          .doc(language)
+          .set(textData, SetOptions(merge: true));
+    } catch (e) {
+      print("Error updating text data for $language: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>?> getTextDisplayApplication(
+      String language) async {
+    try {
+      final docSnapshot = await FirebaseFirestore.instance
+          .collection(_textDisplayed)
+          .doc(language)
+          .get();
+
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data() as Map<String, dynamic>?;
+        if (data != null) {
+          print("Text data for $language fetched successfully: $data");
+        }
+        return data;
+      } else {
+        print("No document found for the language: $language.");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching text data for $language: $e");
+      return null;
+    }
   }
 
   /// ###############################################################
